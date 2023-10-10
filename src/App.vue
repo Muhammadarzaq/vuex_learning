@@ -1,23 +1,20 @@
 <template>
   <div id="app">
     <nav>
-      <buttonComp />
+      <ButtonComp />
     </nav>
     <router-view />
   </div>
 </template>
 
 <script>
-import buttonComp from "@/components/ButtonComp/buttonComp";
-import { useStore } from "vuex";
+import ButtonComp from "@/components/ButtonComp/index.vue";
 
 export default {
   beforeCreate() {
-    const store = useStore();
-    store.commit("loadStore");
   },
   components: {
-    buttonComp,
+    ButtonComp,
   },
 };
 </script>

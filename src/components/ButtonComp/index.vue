@@ -15,7 +15,7 @@
 
 <script>
 export default {
-  name: "buttonComp",
+  name: "ButtonComp",
 };
 </script>
 

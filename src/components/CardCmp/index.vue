@@ -13,13 +13,23 @@
       </div>
     </div>
     <div class="card-footer">
-      <button class="btn btn-primary">Button 1</button>
+      <button class="btn btn-primary">Tambah</button>
     </div>
   </div>
 </template>
 
+<script>
+export default {
+  name: "CardPanel",
+  data() {
+    return {
+      title: "Coba"
+    }
+  }
+}
+</script>
 <style>
-/* Ganti warna latar belakang dan gaya card sesuai kebutuhan Anda */
+/* Ganti warna latar belakang dan gaya CardCmp sesuai kebutuhan Anda */
 .card {
   background-color: #f5f5f5;
   border: 1px solid #ccc;

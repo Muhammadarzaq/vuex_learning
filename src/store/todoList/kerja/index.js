@@ -7,7 +7,7 @@ const state = {
 };
 
 const mutations = {
-  changePengguna(state, payload) {
+  changeTodo(state, payload) {
     state.data = Object.assign({}, state.data, payload);
   }
 };
