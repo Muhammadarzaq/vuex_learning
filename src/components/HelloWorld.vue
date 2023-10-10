@@ -1,58 +1,91 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+  <div class="HelloWorld">
+    <div id="todo-list">
+      <div class="list-item" v-for="n in todos" :key="n.id">
+        <div class="list-item-holder" v-if="n.location == location" :data-status="n.completed">
+          <input type="checkbox" :data-id="n.id" :id="n.id" @click="updateTodo" :checked="n.completed" /> <label :data-id="n.id" :for="n.id"></label>
+          <div class="delete-item" @click="deleteItem" :data-id="n.id">Delete</div>
+          <div class="archive-item" v-if="n.location !== 'archive'" @click="archiveItem" :data-id="n.id">Archive</div>
+        </div>
+      </div>
+      <div id="new-todo-list-item">
+        <input type="text" id="new-todo-list-item-input" @keyup="updateItemText" />
+        <input type="submit" id="new-todo-list-item-submit" @click="newItem" value="Add To Do List Item" />
+      </div>
+    </div>
+
+    <footer></footer>
   </div>
 </template>
 
 <script>
+import { v4 as uuidv4 } from "uuid";
 export default {
-  name: 'HelloWorld',
-  props: {
-    msg: String
-  }
-}
+  name: "HelloWorld",
+  data() {
+    return {
+      phoneNumber: "123-123-123",
+    };
+  },
+  methods: {
+    updateItemText: function (e) {
+      this.newTodoItem = e.currentTarget.value;
+      if (e.keyCode === 13) {
+        this.newItem();
+      }
+      return false;
+    },
+    updateTodo: function (e) {
+      // Get the new status of our todo list item
+      let newStatus = e.currentTarget.parentElement.getAttribute("data-status") == "true" ? false : true;
+      // Send this to our store, and fire the mutation on our
+      // Vuex store called "updateTodo". Take the ID from the
+      // todo list, and send it along with the current status
+      this.$store.commit("updateTodo", {
+        id: e.currentTarget.getAttribute("data-id"),
+        completed: newStatus,
+      });
+    },
+    deleteItem: function (e) {
+      // This will fire our "deleteTodo" mutation, and delete
+      // this todo item according to their ID
+      this.$store.commit("deleteTodo", {
+        id: e.currentTarget.getAttribute("data-id"),
+      });
+    },
+    newItem: function () {
+      // If this.newTodoItem has been typed into
+      // We will create a new todo item using our
+      // "addTodo" mutation
+      if (this.newTodoItem !== "") {
+        this.$store.commit("addTodo", {
+          id: uuidv4(),
+          name: this.newTodoItem,
+          completed: false,
+        });
+      }
+    },
+    archiveItem: function (e) {
+      // Finally, we can change or archive an item
+      // using our "moveTodoItem" mutation
+      this.$store.commit("moveTodoItem", {
+        id: e.currentTarget.getAttribute("data-id"),
+        location: "archive",
+      });
+    },
+  },
+};
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h3 {
-  margin: 40px 0 0;
+<style scoped="">
+#HelloWorld {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  padding: 2rem;
+  margin: 2rem;
+  border: 1px solid #ddd;
+  border-radius: 10px;
 }
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
+h2 {
+  margin: 0 0 1.5rem 0;
 }
 </style>
