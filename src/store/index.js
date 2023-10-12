@@ -53,4 +53,9 @@ export default new Vuex.Store({
       }
     },
   },
+  actions: {
+    getDataSiswa({state}) {
+      console.log(state.todos);
+    },
+  },
 });

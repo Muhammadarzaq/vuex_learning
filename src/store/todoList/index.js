@@ -3,6 +3,8 @@ const state = {
     loading: false,
     formData: {
       judul: null,
+      isCompleted: false,
+      isArchive: false,
     },
     columns: [],
     items: [

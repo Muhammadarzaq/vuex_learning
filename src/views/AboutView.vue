@@ -5,19 +5,19 @@
         <div class="card-header text-start row">
 
           <div
-              v-for="(item, index) in todoList.items"
+              v-for="(item, index) in todoListComputed"
               :key="`todo_${index}`"
               class="col-12 my-1">
-            <input :id="`checkboxId${index}`" type="checkbox"/>
+            <input v-model="item.isCompleted" :id="`checkboxId${index}`" type="checkbox"/>
             <label :for="`checkboxId${index}`">{{item.judul}}</label>
 
-            <button class="btn btn-secondary ml-2" style="margin-left: 15px">Delete</button>
-            <button class="btn btn-secondary ml-2" style="margin-left: 15px">archive</button>
+            <button class="btn btn-secondary ml-2" style="margin-left: 15px" @click="actionDeleteTodo(item.judul)">Delete</button>
+            <button class="btn btn-secondary ml-2" style="margin-left: 15px" @click="actionArchiveTodo(item.judul)">archive</button>
           </div>
 
-          <!--<pre>
+          <pre>
             {{todoList}}
-          </pre>-->
+          </pre>
         </div>
         <div class="card-body">
           <div class="form-group">
@@ -34,19 +34,63 @@
 
 <script>
 
-import {mapActions, mapState} from "vuex";
+import {mapActions, mapMutations, mapState} from "vuex";
 
 export default {
   name: "AboutView",
   computed: {
     ...mapState({
       todoList: state => state.stateTodoList.data,
-    })
+    }),
+    todoListComputed() {
+      return this.todoList.items.filter(item => !item.isArchive);
+    }
   },
   methods: {
     ...mapActions("stateTodoList", ["ADD_TODO"]),
+    ...mapMutations("stateTodoList", ["changeTodo"]),
+    ...mapActions(["getDataSiswa"]),
+    findTodoIndex(judul) {
+      return this.todoList.items.findIndex(item => item.judul.toLowerCase() === judul.toLowerCase());
+    },
+    actionDeleteTodo(judul) {
+      const indexTodo = this.findTodoIndex(judul);
+      if (indexTodo > -1) {
+        this.todoList.items.splice(indexTodo, 1);
+        this.changeTodo({
+          items: [...this.todoList.items]
+        });
+      }
+    },
+    actionArchiveTodo(judul) {
+      const updatedItems = this.todoList.items.map(item => {
+        if (item.judul.toLowerCase() === judul.toLowerCase()) {
+          return {
+            ...item,
+            isArchive: true
+          };
+        }
+        return item;
+      });
+      this.changeTodo({ items: updatedItems });
+    },
     actionAddTodo() {
+      // cek judul harus diisi
+      if (!this.todoList.formData.judul) {
+        alert("Judul Masih Kosong");
+        return false;
+      }
+
+      // proses menambahkan ke array sementara
       this.ADD_TODO();
+
+      // proses menghilangkan nilai dijudul
+      this.changeTodo({
+        formData: {
+          ...this.todoList.formData,
+          judul: "",
+        }
+      })
     }
   }
 };
